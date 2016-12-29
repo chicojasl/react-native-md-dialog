@@ -51,10 +51,18 @@ export default class Dialog extends Component {
         );
     }
     open() {
-        this.setState({ visible: true }, () => this.animationTimingStart.start());
+        this.setState({ visible: true }, () => {
+          this.animationTimingStart.start();
+          this.props.onOpen();
+        });
     }
     close() {
-        this.animationTimingEnd.start(() => this.setState({ visible: false }));
+        if(this.state.visible) {
+          this.props.onClose();
+        };
+        this.animationTimingEnd.start(() => {
+          this.setState({ visible: false });
+        });
     }
     render() {
         let {
@@ -66,7 +74,7 @@ export default class Dialog extends Component {
             dismissable,
             backgroundColor,
             maxHeight,
-            width, 
+            width
         } = this.props;
 
         let leftActions, rightActions;
@@ -134,8 +142,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         opacity: 0,
         zIndex: 9999,
-        elevation: 9999,
-        
+        elevation: 9999
     },
     dismissWrapper: {
         position: 'absolute',
@@ -181,7 +188,7 @@ const styles = StyleSheet.create({
     dialogBtn: {
         fontWeight: isAndroid ? '400' : '500',
         fontFamily: isAndroid ? 'sans-serif-medium' : 'System',
-        fontSize: isAndroid ? 14 : 13,        
+        fontSize: isAndroid ? 14 : 13
     }
 })
 
@@ -199,6 +206,8 @@ Dialog.propTypes = {
     animationDuration: PropTypes.number,
     width: PropTypes.number,
     maxHeight: PropTypes.number,
+    onClose: PropTypes.func,
+    onOpen: PropTypes.func,
 }
 Dialog.defaultProps = {
     title: 'Dialog',
@@ -208,4 +217,6 @@ Dialog.defaultProps = {
     animationDuration: 200,
     width: deviceWidth - 48,
     maxHeight: 420,
+    onClose: ()=>{},
+    onOpen: ()=>{},
 }
